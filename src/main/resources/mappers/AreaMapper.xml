@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liuzhenzhen.liuzhenzhencfs.mapper.AreaMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.liuzhenzhen.liuzhenzhencfs.entity.Area">
+        <id column="id" property="id" />
+        <result column="pid" property="pid" />
+        <result column="name" property="name" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, pid, name
+    </sql>
+    <resultMap id="smap" type="com.liuzhenzhen.liuzhenzhencfs.entity.Area">
+        <id column="id" property="id" />
+        <result column="pid" property="pid" />
+        <result column="name" property="name" />
+        <collection property="list" ofType="com.liuzhenzhen.liuzhenzhencfs.entity.Area">
+            <id column="id1" property="id" />
+            <result column="name1" property="name" />
+            <collection property="list" ofType="com.liuzhenzhen.liuzhenzhencfs.entity.Area">
+                <id column="id2" property="id" />
+                <result column="name2" property="name" />
+            </collection>
+        </collection>
+    </resultMap>
+    <select id="findpid" resultMap="smap">
+        SELECT
+        p.*, c.id id1,
+        c.name name1,
+        d.id id2,
+        d.name name2
+    FROM
+        area p
+    LEFT JOIN area c ON p.id = c.pid
+    LEFT JOIN area d ON c.id = d.pid
+    WHERE
+	p.pid = #{pid}
+    </select>
+
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liuzhenzhen.liuzhenzhencfs.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.liuzhenzhen.liuzhenzhencfs.entity.User">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="phone" property="phone" />
+        <result column="telephone" property="telephone" />
+        <result column="address" property="address" />
+        <result column="enabled" property="enabled" />
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="userface" property="userface" />
+        <result column="remark" property="remark" />
+        <result column="sex" property="sex" />
+        <result column="province" property="province" />
+        <result column="city" property="city" />
+        <result column="district" property="district" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, phone, telephone, address, enabled, username, password, userface, remark, sex, province, city, district
+    </sql>
+    <select id="lists" resultType="com.liuzhenzhen.liuzhenzhencfs.entity.User">
+                SELECT
+            u.*, GROUP_CONCAT(r.nameZh) rnames,
+            GROUP_CONCAT(r.id) rids,
+            a.`name` AS sheng,
+            b. NAME AS shi,
+            c.`name` AS xian
+        FROM
+            USER u
+        LEFT JOIN user_role ur ON u.id = ur.uid
+        LEFT JOIN role r ON ur.rid = r.id
+        LEFT JOIN area a ON u.province = a.id
+        LEFT JOIN area b ON u.city = b.id
+        LEFT JOIN area c ON u.district = c.id
+        <where>
+            <if test="name!=null and name !=''">
+                and u.name like concat('%',#{name},'%')
+            </if>
+            <if test="username!=null and username !=''">
+                and u.username like concat('%',#{username},'%')
+            </if>
+            <if test="phone!=null and phone !=''">
+                and u.phone like concat('%',#{phone},'%')
+            </if>
+            and u.enabled=1
+        </where>
+        GROUP BY
+            u.id
+    </select>
+    <select id="find" resultType="com.liuzhenzhen.liuzhenzhencfs.entity.User">
+        SELECT
+	u.*, GROUP_CONCAT(r.nameZh) rnames,
+	GROUP_CONCAT(r.id) rids,
+	a.`name` AS sheng,
+	b. NAME AS shi,
+	c.`name` AS xian
+    FROM
+        USER u
+    LEFT JOIN user_role ur ON u.id = ur.uid
+    LEFT JOIN role r ON ur.rid = r.id
+    LEFT JOIN area a ON u.province = a.id
+    LEFT JOIN area b ON u.city = b.id
+    LEFT JOIN area c ON u.district = c.id
+    WHERE u.enabled=1 and u.id=#{id}
+    GROUP BY
+	u.id;
+    </select>
+</mapper>
